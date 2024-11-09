@@ -1,15 +1,19 @@
-# relationship_app/views.py
 from django.shortcuts import render
-from django.views.generic.detail import DetailView  # Import DetailView here
-from .models import Book, Library
+from django.apps import apps
 
-# Function-based view to list all books
-def list_books(request):
-    books = Book.objects.all()
-    return render(request, 'relationship_app/list_books.html', {'books': books})
+def list_books_in_library(request, library_name):
+    # Load Library model dynamically
+    Library = apps.get_model('relationship_app', 'Library')
+    Book = apps.get_model('relationship_app', 'Book')
+    
+    library = Library.objects.filter(name=library_name).first()
+    books = Book.objects.filter(libraries=library) if library else []
+    return render(request, 'relationship_app/book_list.html', {'library': library, 'books': books})
 
-# Class-based view to display details for a specific library
-class LibraryDetailView(DetailView):
-    model = Library
-    template_name = 'relationship_app/library_detail.html'
-    context_object_name = 'library'
+def get_librarian_for_library(request, library_name):
+    Library = apps.get_model('relationship_app', 'Library')
+    Librarian = apps.get_model('relationship_app', 'Librarian')
+    
+    library = Library.objects.filter(name=library_name).first()
+    librarian = Librarian.objects.filter(library=library).first() if library else None
+    return render(request, 'relationship_app/librarian_detail.html', {'library': library, 'librarian': librarian})
