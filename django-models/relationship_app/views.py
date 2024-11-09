@@ -20,11 +20,12 @@ class LibraryDetailView(DetailView):
     context_object_name = 'library'  # Name of the context variable for the library object
 
 
+
+
 # relationship_app/views.py
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login
 
 # User registration view
@@ -38,7 +39,3 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
-
-# Login view is built-in, so no need to write a custom view.
-# Django automatically uses LoginView for login functionality.
-# Logout view is also built-in, and LogoutView is used to log users out.

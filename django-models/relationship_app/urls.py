@@ -14,7 +14,7 @@ urlpatterns = [
 # relationship_app/urls.py
 
 from django.urls import path
-from .views import register  # Import the register view
+from .views import register  # Import the register view from views.py
 from django.contrib.auth.views import LoginView, LogoutView  # Import LoginView and LogoutView
 
 urlpatterns = [
