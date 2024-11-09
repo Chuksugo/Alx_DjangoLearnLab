@@ -10,15 +10,17 @@ urlpatterns = [
 
 
 
+
 # relationship_app/urls.py
 
 from django.urls import path
-from .views import register
-from django.contrib.auth.views import LoginView, LogoutView
+from .views import register  # Import the register view
+from django.contrib.auth.views import LoginView, LogoutView  # Import LoginView and LogoutView
 
 urlpatterns = [
-    path('login/', LoginView.as_view(), name='login'),  # Login view
-    path('logout/', LogoutView.as_view(), name='logout'),  # Logout view
+    path('login/', LoginView.as_view(template_name='relationship_app/login.html'), name='login'),  # Login view with custom template
+    path('logout/', LogoutView.as_view(template_name='relationship_app/logout.html'), name='logout'),  # Logout view with custom template
     path('register/', register, name='register'),  # Registration view
 ]
+
 
