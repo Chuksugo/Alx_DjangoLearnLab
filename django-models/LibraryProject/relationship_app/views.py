@@ -52,3 +52,16 @@ class CustomLogoutView(LogoutView):
 def home_view(request):
     return render(request, 'relationship_app/home.html')  # Referencing the app folder
 
+# relationship_app/views.py
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Redirect to login page after successful registration
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
