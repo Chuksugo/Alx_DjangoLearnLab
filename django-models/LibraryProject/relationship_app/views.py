@@ -65,3 +65,27 @@ def register_view(request):
     else:
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import user_passes_test
+
+# Helper function to check roles
+def role_required(role):
+    def check_role(user):
+        return user.userprofile.role == role
+    return user_passes_test(check_role)
+
+# Admin view - only accessible by Admins
+@role_required('Admin')
+def admin_view(request):
+    return render(request, 'admin_view.html')
+
+# Librarian view - only accessible by Librarians
+@role_required('Librarian')
+def librarian_view(request):
+    return render(request, 'librarian_view.html')
+
+# Member view - only accessible by Members
+@role_required('Member')
+def member_view(request):
+    return render(request, 'member_view.html')
