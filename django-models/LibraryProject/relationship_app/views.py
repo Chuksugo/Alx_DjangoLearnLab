@@ -21,22 +21,34 @@ class LibraryDetailView(DetailView):
 
 
 
-
-
 # relationship_app/views.py
-
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 
-def register(request):
+# relationship_app/views.py
+def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('home')  # Change 'home' to the URL name where you want to redirect after registration
+            return redirect('login')  # Redirect to login after registration
     else:
         form = UserCreationForm()
-    return render(request, 'relationship_app/register.html', {'form': form})
+    return render(request, 'register.html', {'form': form})
+
+# relationship_app/views.py
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
+    redirect_authenticated_user = True
+
+class CustomLogoutView(LogoutView):
+    template_name = 'logout.html'
+
+
+# relationship_app/views.py
+def home_view(request):
+    return render(request, 'relationship_app/home.html')  # Referencing the app folder
 

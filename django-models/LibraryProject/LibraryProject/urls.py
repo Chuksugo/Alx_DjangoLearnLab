@@ -14,9 +14,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+
+# LibraryProject/urls.py
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from relationship_app.views import home_view  # Import the home view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('auth/', include('relationship_app.urls')),  # Include authentication app URLs
+    path('', home_view, name='home'),  # Root URL points to the home page
 ]
