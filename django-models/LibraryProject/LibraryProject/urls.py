@@ -26,3 +26,8 @@ urlpatterns = [
     path('auth/', include('relationship_app.urls')),  # Include authentication app URLs
     path('', home_view, name='home'),  # Root URL points to the home page
 ]
+
+# Print the URL patterns to confirm
+import pprint
+
+pprint.pprint(urlpatterns)
