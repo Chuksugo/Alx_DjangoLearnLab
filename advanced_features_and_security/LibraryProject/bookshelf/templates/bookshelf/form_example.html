@@ -8,9 +8,12 @@
     <h1>Form Submission</h1>
     <form method="POST">
         {% csrf_token %}
-        <label for="name">Your Name:</label>
-        <input type="text" name="name" id="name" required>
+        {{ form.as_p }}  <!-- Renders the form fields as paragraphs -->
         <button type="submit">Submit</button>
     </form>
+
+    {% if name %}
+        <p>Hello, {{ name }}!</p>  <!-- Displays the processed name -->
+    {% endif %}
 </body>
 </html>
