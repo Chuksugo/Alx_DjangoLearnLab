@@ -155,3 +155,17 @@ SESSION_COOKIE_SECURE = True
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'",)
 CSP_STYLE_SRC = ("'self'",)
+
+
+
+# Redirect all non-HTTPS requests to HTTPS
+SECURE_SSL_REDIRECT = True
+
+# Enforce the use of HTTPS for one year (in seconds)
+SECURE_HSTS_SECONDS = 31536000  # One year
+
+# Include all subdomains in the HSTS policy
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# Allow preloading of the HSTS policy
+SECURE_HSTS_PRELOAD = True
