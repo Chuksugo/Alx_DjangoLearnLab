@@ -24,3 +24,13 @@ def delete_book(request, book_id):
         # Logic for deleting the book
         book.delete()
     return render(request, 'delete_book.html', {'book': book})
+
+    
+
+from django.shortcuts import render
+from .models import Book
+
+# View to display a list of all books
+def book_list(request):
+    books = Book.objects.all()  # Get all books from the database
+    return render(request, 'book_list.html', {'books': books})
