@@ -169,3 +169,6 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 # Allow preloading of the HSTS policy
 SECURE_HSTS_PRELOAD = True
+
+# Ensure that Django knows the request is secure when behind a reverse proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
