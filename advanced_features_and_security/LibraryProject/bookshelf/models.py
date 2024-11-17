@@ -25,5 +25,23 @@ class CustomUser(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     profile_photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True)
 
+
+
+from django.db import models  # Import the models module to define model fields
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)  # A character field for the book title
+    author = models.CharField(max_length=100)  # A character field for the author's name
+    publication_date = models.DateField()  # A date field for the publication date
+
+    @property
+    def publication_year(self):
+        """Return the year of publication from the publication_date."""
+        return self.publication_date.year
+
     def __str__(self):
-        return self.username
+        """Return the book title as the string representation of the object."""
+        return self.title
+
+
+
