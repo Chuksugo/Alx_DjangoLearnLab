@@ -34,3 +34,11 @@ from .models import Book
 def book_list(request):
     books = Book.objects.all()  # Get all books from the database
     return render(request, 'book_list.html', {'books': books})
+
+
+def book_view(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            # Process the valid data
+            pass

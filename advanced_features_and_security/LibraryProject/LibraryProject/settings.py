@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-6-lehz_$5r&6ipkh7fovn#9k--p#af$xeg+*tgw$7ab8a7a9j_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bookshelf',
     'relationship_app',
+    'csp',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'
@@ -133,4 +135,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 
+# Security settings to enhance protection against attacks
 
+# Enable browser-side XSS filter
+SECURE_BROWSER_XSS_FILTER = True
+
+# Prevent clickjacking by denying framing
+X_FRAME_OPTIONS = 'DENY'
+
+# Prevent content sniffing by browsers
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enforce secure cookies (HTTPS only)
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+
+# Content Security Policy settings
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'",)
