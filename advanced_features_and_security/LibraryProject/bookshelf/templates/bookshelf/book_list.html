@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book List</title>
+</head>
+<body>
+    <h1>Books</h1>
+    <form method="POST" action="{% url 'add_book' %}">
+        {% csrf_token %}
+        <label for="book-title">Book Title:</label>
+        <input type="text" name="title" id="book-title" required>
+        <button type="submit">Add Book</button>
+    </form>
+
+    <ul>
+        {% for book in books %}
+            <li>{{ book.title }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
