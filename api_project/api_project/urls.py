@@ -17,7 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# Import your router from api/urls.py
+from api.urls import router
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),  # Include API app routes
+    path('admin/', admin.site.urls),  # Admin panel route
+    path('api/', include(router.urls)),  # API routes
 ]
+
