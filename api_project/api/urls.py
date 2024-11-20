@@ -23,19 +23,20 @@ from rest_framework_simplejwt.views import (
 )
 
 urlpatterns = [
-    ...
+
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
 
 
+
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import YourModelViewSet
+from .views import BookViewSet  # Import your BookViewSet
 
 router = DefaultRouter()
-router.register(r'your_model', YourModelViewSet, basename='your_model')
+router.register(r'books', BookViewSet, basename='book')  # Register the BookViewSet
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include(router.urls)),  # Include the router-generated URLs
 ]

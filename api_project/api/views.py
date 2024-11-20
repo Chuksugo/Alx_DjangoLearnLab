@@ -7,23 +7,12 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookSerializer  # Use the BookSerializer to format the response
 
 
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.viewsets import ModelViewSet
-from .models import YourModel
-from .serializers import YourModelSerializer
-
-class YourModelViewSet(ModelViewSet):
-    queryset = YourModel.objects.all()
-    serializer_class = YourModelSerializer
-    permission_classes = [IsAuthenticated]
-
-
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
-from .models import YourModel
-from .serializers import YourModelSerializer
+from rest_framework.viewsets import ModelViewSet
+from .models import Book  # Import your Book model
+from .serializers import BookSerializer  # Import the corresponding serializer
 
-class YourModelViewSet(ModelViewSet):
-    queryset = YourModel.objects.all()
-    serializer_class = YourModelSerializer
-    permission_classes = [IsAuthenticated]
+class BookViewSet(ModelViewSet):
+    queryset = Book.objects.all()  # Query all books
+    serializer_class = BookSerializer  # Use the Book serializer
+    permission_classes = [IsAuthenticated]  # Only authenticated users can access
