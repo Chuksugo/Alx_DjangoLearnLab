@@ -17,10 +17,10 @@ class BookViewSet(ModelViewSet):
     serializer_class = BookSerializer  # Use the Book serializer
     permission_classes = [IsAuthenticated]  # Only authenticated users can access
 
-from rest_framework.generics import ListAPIView
+from rest_framework import generics
 from .models import Book
 from .serializers import BookSerializer
 
-class BookList(ListAPIView):
-    queryset = Book.objects.all()  # Retrieve all books from the database
-    serializer_class = BookSerializer  # Use the serializer to serialize data
+class BookListView(generics.ListAPIView):
+    queryset = Book.objects.all()  # Retrieve all Book records
+    serializer_class = BookSerializer  # Specify the serializer to use

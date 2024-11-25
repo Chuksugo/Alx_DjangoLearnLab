@@ -41,9 +41,10 @@ urlpatterns = [
     path('', include(router.urls)),  # Include the router-generated URLs
 ]
 
+
 from django.urls import path
-from .views import BookList
+from .views import BookListView
 
 urlpatterns = [
-    path('books/', BookList.as_view(), name='book-list'),  # Maps to the BookList view
+    path('books/', BookListView.as_view(), name='book-list'),
 ]
