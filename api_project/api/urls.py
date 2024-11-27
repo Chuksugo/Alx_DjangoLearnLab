@@ -43,8 +43,8 @@ urlpatterns = [
 
 
 from django.urls import path
-from .views import BookListView
+from .views import BookList  # Import 'BookList'
 
 urlpatterns = [
-    path('books/', BookListView.as_view(), name='book-list'),
+    path('books/', BookList.as_view(), name='book-list'),  # Use 'BookList.as_view()'
 ]
