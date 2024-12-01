@@ -1,14 +1,13 @@
 from rest_framework import serializers
 from .models import Author, Book
-import datetime
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ['id', 'title', 'publication_year', 'author']
+        fields = '__all__'
 
     def validate_publication_year(self, value):
-        if value > datetime.datetime.now().year:
+        if value > 2024:  # Replace with the current year as needed
             raise serializers.ValidationError("Publication year cannot be in the future.")
         return value
 
@@ -17,4 +16,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Author
-        fields = ['id', 'name', 'books']
+        fields = ['name', 'books']
+
+
+        
