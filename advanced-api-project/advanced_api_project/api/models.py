@@ -8,8 +8,14 @@ class Author(models.Model):
 
 class Book(models.Model):
     title = models.CharField(max_length=255)
-    publication_year = models.PositiveIntegerField()
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='books')
+    publication_year = models.IntegerField()
+    author = models.ForeignKey(Author, related_name='books', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
+
+"""
+Models:
+- Author: Represents a writer of books with a one-to-many relationship to books.
+- Book: Represents a book with a foreign key to the Author model.
+"""
