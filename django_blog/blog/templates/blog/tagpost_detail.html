@@ -1,5 +1,5 @@
-<div class="tags">
+<p>Tags:
     {% for tag in post.tags.all %}
-        <a href="{% url 'tagged_posts' tag.name %}">{{ tag.name }}</a>
+        <a href="{% url 'posts_by_tag' tag.slug %}">{{ tag.name }}</a>
     {% endfor %}
-</div>
+</p>

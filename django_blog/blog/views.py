@@ -198,3 +198,18 @@ def tag_view(request, tag_name):
     tag = Tag.objects.get(name=tag_name)
     posts = tag.posts.all()
     return render(request, 'tagged_posts.html', {'posts': posts, 'tag': tag})
+
+
+from django.views.generic.list import ListView
+from django.shortcuts import get_object_or_404
+from .models import Post, Tag
+
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/post_list.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        tag_slug = self.kwargs.get('tag_slug')
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        return Post.objects.filter(tags=tag)
