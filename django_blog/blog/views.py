@@ -145,3 +145,56 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return redirect('post_detail', pk=self.object.post.pk)
+
+
+
+# View for updating an existing comment
+def comment_update(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detail', pk=comment.post.pk)  # Redirect to the post's detail page
+    else:
+        form = CommentForm(instance=comment)
+    return render(request, 'comment_update.html', {'form': form})
+
+# View for creating a new comment for a specific post
+def new_comment(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+            return redirect('post_detail', pk=post.pk)  # Redirect to the post's detail page
+    else:
+        form = CommentForm()
+    return render(request, 'new_comment.html', {'form': form, 'post': post})
+
+
+
+from django.db.models import Q
+from django.shortcuts import render
+from .models import Post
+
+def search_view(request):
+    query = request.GET.get('q')
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) | 
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    else:
+        posts = Post.objects.all()
+    
+    return render(request, 'search_results.html', {'posts': posts, 'query': query})
+
+
+def tag_view(request, tag_name):
+    tag = Tag.objects.get(name=tag_name)
+    posts = tag.posts.all()
+    return render(request, 'tagged_posts.html', {'posts': posts, 'tag': tag})
