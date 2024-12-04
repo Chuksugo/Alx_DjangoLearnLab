@@ -10,10 +10,14 @@ urlpatterns = [
     path('', views.home, name='home'),  # Home page route
 ]
 
+from django.urls import path
+from .views import PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView
+
 urlpatterns = [
     path('', PostListView.as_view(), name='post_list'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post_detail'),
     path('post/new/', PostCreateView.as_view(), name='post_new'),
-    path('post/<int:pk>/edit/', PostUpdateView.as_view(), name='post_edit'),  # Edit URL
+    path('post/<int:pk>/edit/', PostUpdateView.as_view(), name='post_edit'),  # Add this line for updating posts
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post_delete'),
+    path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post_update'),
 ]
