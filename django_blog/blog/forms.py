@@ -13,15 +13,16 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ["username", "email", "password1", "password2"]
 
 
-from django import forms
-from .models import Post
-
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'tags']
 
-   tags = forms.CharField(widget=TagWidget(), required=False)
+    # Custom widget for the title field
+    title = forms.CharField(
+        widget=forms.TextInput(attrs={'placeholder': 'Enter post title', 'class': 'custom-class'})
+    )
+
 
 
 
