@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Post, Tag
 from .models import Comment
+from taggit.forms import TagWidget
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -20,11 +21,7 @@ class PostForm(forms.ModelForm):
         model = Post
         fields = ['title', 'content', 'tags']
 
-    # Ensure the indentation here is consistent with the rest of the class
-    def clean_tags(self):
-        tags = self.cleaned_data['tags']
-        # Add any additional logic you need for tag validation
-        return tags
+   tags = forms.CharField(widget=TagWidget(), required=False)
 
 
 
