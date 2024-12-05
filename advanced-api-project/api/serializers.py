@@ -23,3 +23,10 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 # BookSerializer serializes all fields of the Book model and validates that the publication year is not in the future.
 # AuthorSerializer serializes the author's name and includes a nested BookSerializer to dynamically serialize related books.
+from rest_framework import serializers
+from .models import Book
+
+class BookSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ['id', 'title', 'author', 'publication_year']
