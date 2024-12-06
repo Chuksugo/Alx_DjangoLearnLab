@@ -6,8 +6,14 @@ from django.contrib.auth.models import User  # Or use a custom user model
 from rest_framework.test import APITestCase
 from .models import Book  # Adjust import according to your project structure
 
+
 class BookAPITestCase(APITestCase):
-    def test_create_book(self):
+    def setUp(self):
+        # Create a test user
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.client.login(username='testuser', password='testpassword')
+
+    def test_create_book_authenticated(self):
         data = {
             'title': 'Test Book',
             'author': 'Author Name',
@@ -17,6 +23,7 @@ class BookAPITestCase(APITestCase):
         response = self.client.post('/api/books/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['title'], 'Test Book')
+
 
 
     def test_get_book(self):
