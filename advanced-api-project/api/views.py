@@ -71,3 +71,13 @@ class BookUpdateView(generics.UpdateAPIView):
 class BookDeleteView(generics.DestroyAPIView):
     queryset = Book.objects.all()
     permission_classes = [IsAuthenticated]
+
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Welcome to the homepage!")
+
+from django.shortcuts import render
+
+def home(request):
+    return render(request, 'base.html')
