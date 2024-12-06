@@ -6,6 +6,8 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters
 from .filters import BookFilter
+from rest_framework.filters import OrderingFilter
+
 
 # Define a filter class for more customizable filtering
 class BookFilter(filters.FilterSet):
