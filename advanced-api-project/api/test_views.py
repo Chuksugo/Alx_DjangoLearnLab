@@ -3,24 +3,21 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from .models import Book  # Adjust the import as needed
 from django.contrib.auth.models import User  # Or use a custom user model
+from rest_framework.test import APITestCase
+from .models import Book  # Adjust import according to your project structure
 
-class BookAPITests(TestCase):
-    def setUp(self):
-        # Create a test user and authenticate with APIClient
-        self.user = User.objects.create_user(username='testuser', password='testpassword')
-        self.client = APIClient()
-        self.client.force_authenticate(user=self.user)
-        self.book_data = {
-            'title': 'Test Book',
-            'content': 'This is a test book.',
-            'published_date': '2024-12-06',
-            'author': self.user.id,
-        }
-
+class BookAPITestCase(APITestCase):
     def test_create_book(self):
-        response = self.client.post('/api/books/', self.book_data, format='json')
+        data = {
+            'title': 'Test Book',
+            'author': 'Author Name',
+            'published_date': '2024-12-06',
+            'content': 'This is a test book content.',
+        }
+        response = self.client.post('/api/books/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['title'], 'Test Book')
+
 
     def test_get_book(self):
         # First, create a book
