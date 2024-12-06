@@ -4,20 +4,19 @@ from .serializers import BookSerializer
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
 
-# ListView: Retrieve all books
-class BookListView(generics.ListAPIView):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filterset_fields = ['title', 'author', 'publication_year']  # Fields to filter by
-    search_fields = ['title', 'author']  # Fields to search by
-    ordering_fields = ['title', 'publication_year']  # Fields that can be used for ordering
-    ordering = ['title']  # Default ordering
+# Define a filter class for more customizable filtering
+class BookFilter(filters.FilterSet):
+    title = filters.CharFilter(field_name='title', lookup_expr='icontains')
+    author = filters.CharFilter(field_name='author__name', lookup_expr='icontains')
+    publication_year = filters.NumberFilter(field_name='publication_year')
 
+    class Meta:
+        model = Book
+        fields = ['title', 'author', 'publication_year']
 
-# Updated BookListView with added filter, search, and ordering functionality
+# ListView: Retrieve all books with filter, search, and ordering functionality
 class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
@@ -31,16 +30,6 @@ class BookListView(generics.ListAPIView):
         if self.request.method == 'GET':
             return [IsAuthenticatedOrReadOnly()]
         return [IsAuthenticated()]
-
-# Define a filter class for more customizable filtering
-class BookFilter(FilterSet):
-    title = CharFilter(lookup_expr='icontains')
-    author = CharFilter(lookup_expr='icontains')
-    publication_year = NumberFilter()
-
-    class Meta:
-        model = Book
-        fields = ['title', 'author', 'publication_year']
 
 # DetailView: Retrieve a single book by ID
 class BookDetailView(generics.RetrieveAPIView):
