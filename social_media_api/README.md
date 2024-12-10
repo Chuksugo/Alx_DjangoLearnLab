@@ -32,3 +32,36 @@ Bio: A short bio or description of the user.
 Followers: A ManyToMany field for user follow relationships.
 This custom user model extends Django's built-in user model to support additional attributes and features for better profile management.
 
+
+
+======
+
+
+ Enhance the CustomUser model to support user follow relationships and feed functionality.
+
+Model Updates:
+
+Added Fields:
+followers: A ManyToManyField representing users who follow the current user, with a related_name='followed_by'.
+following: A ManyToManyField representing users the current user is following, with a related_name='following_users'.
+Migration:
+
+Run the following commands to update the database schema:
+bash
+Copy code
+python manage.py makemigrations accounts
+python manage.py migrate
+Functionality:
+
+Follow/Unfollow: Users can follow or unfollow other users, creating a bidirectional relationship.
+Accessing Relationships:
+user1.following.add(user2) to follow another user.
+user1.following.remove(user2) to unfollow.
+user2.followed_by.all() to see who follows user2.
+user1.following_users.all() to see whom user1 is following.
+Future Considerations:
+
+Ensure consistency in relationship handling.
+Use descriptive related_name attributes for readability.
+Consider edge case handling, such as preventing self-following or duplicate entries.
+These updates provide the foundation for user interactions related to following, unfollowing, and generating feeds based on users’ follow relationships.

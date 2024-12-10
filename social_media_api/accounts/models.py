@@ -22,10 +22,12 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(username, email, password, **extra_fields)
 
+
 class CustomUser(AbstractUser):
     bio = models.TextField(blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
-    followers = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
+    followers = models.ManyToManyField('self', symmetrical=False, related_name='followed_by', blank=True)
+    following = models.ManyToManyField('self', symmetrical=False, related_name='following_users', blank=True)
 
     objects = CustomUserManager()
 
