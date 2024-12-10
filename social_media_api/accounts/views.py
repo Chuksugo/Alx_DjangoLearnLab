@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 
+
 class RegisterView(generics.CreateAPIView):
     """
     API view for registering a new user.
