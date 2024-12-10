@@ -3,10 +3,10 @@ from rest_framework import generics, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth import get_user_model, authenticate
+from .serializers import UserSerializer, LoginSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate, get_user_model
-from .serializers import UserSerializer, LoginSerializer
 
 User = get_user_model()
 
@@ -14,7 +14,7 @@ class RegisterView(generics.CreateAPIView):
     """
     API view for registering a new user.
     """
-    queryset = CustomUser.objects.all()
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]  # Public access for user registration
 
@@ -27,18 +27,14 @@ class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            # Authenticate the user
             user = authenticate(
                 username=serializer.validated_data['username'],
                 password=serializer.validated_data['password']
             )
             if user is not None:
-                # Generate or get the token
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({'token': token.key})
-            else:
-                return Response({'error': 'Invalid credentials'}, status=400)
-
+            return Response({'error': 'Invalid credentials'}, status=400)
         return Response(serializer.errors, status=400)
 
 class FollowUserView(APIView):
