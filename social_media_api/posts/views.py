@@ -41,7 +41,7 @@ class FeedView(APIView):
 # Like a post
 @api_view(['POST'])
 def like_post(request, post_id):
-    # Fetch post using get_object_or_404
+    # Use get_object_or_404 to fetch the post safely
     post = get_object_or_404(Post, id=post_id)
 
     # Check if the user has already liked the post
@@ -53,28 +53,28 @@ def like_post(request, post_id):
     serializer = LikeSerializer(like)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-# Unlike a post (updated to use api_view for consistency)
+# Unlike a post
 @api_view(['POST'])
 def unlike_post(request, post_id):
-    # Fetch post using get_object_or_404
+    # Use get_object_or_404 to fetch the post safely
     post = get_object_or_404(Post, pk=post_id)
 
-    # Try to get the like object if it exists
-    try:
-        like = Like.objects.get(user=request.user, post=post)
-        like.delete()  # Remove the like
-    except Like.DoesNotExist:
+    # Try to get the like object if it exists, or create it
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+    if not created:
+        # If like was not created (it already exists), delete it
+        like.delete()
+        # Create a notification for the unliked action
+        Notification.objects.create(
+            recipient=post.author,
+            actor=request.user,
+            verb='unliked your post',
+            target=post
+        )
+        return Response({'message': 'Post unliked successfully.'}, status=status.HTTP_200_OK)
+    else:
         return Response({'message': 'You have not liked this post yet.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    # Create a notification for the unliked action
-    Notification.objects.create(
-        recipient=post.author,
-        actor=request.user,
-        verb='unliked your post',
-        target=post
-    )
-
-    return Response({'message': 'Post unliked successfully.'}, status=status.HTTP_200_OK)
 
 # PostDetailView to get details of a specific post
 class PostDetailView(APIView):
