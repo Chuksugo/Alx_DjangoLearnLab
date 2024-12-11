@@ -100,18 +100,16 @@ def unlike_post(request, post_id):
 
 
 
-from rest_framework import status
-from rest_framework.decorators import api_view
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .models import Post, Like
 from .serializers import LikeSerializer
-from .models import Post
 
 @api_view(['POST'])
 def like_post(request, post_id):
-    try:
-        post = Post.objects.get(id=post_id)
-    except Post.DoesNotExist:
-        return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+    # Use get_object_or_404 to fetch the post safely
+    post = get_object_or_404(Post, id=post_id)
 
     # Check if the user has already liked the post
     if Like.objects.filter(user=request.user, post=post).exists():
