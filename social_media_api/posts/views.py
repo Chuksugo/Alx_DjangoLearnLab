@@ -47,58 +47,57 @@ class FeedView(APIView):
         return Response(serialized_posts, status=status.HTTP_200_OK)
 
 
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from posts.models import Post, Like
+from notifications.models import Notification
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.http import JsonResponse
-from .models import Post, Like
-from notifications.models import Notification
 
 @login_required
 def like_post(request, post_id):
-    """Handles liking a post."""
-    post = get_object_or_404(Post, id=post_id)
+    # Get the post object or return 404 if not found
+    post = get_object_or_404(Post, pk=post_id)
 
     # Check if the user has already liked the post
-    if Like.objects.filter(user=request.user, post=post).exists():
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+    if not created:
         return JsonResponse({'message': 'You have already liked this post.'}, status=400)
 
-    # Create a new Like entry
-    Like.objects.create(user=request.user, post=post)
-
-    # Create a notification for the like action
-    Notification.objects.create(
-        recipient=post.author,  # The post's author gets notified
+    # Create a notification for the post author
+    notification = Notification.objects.create(
+        recipient=post.author,  # Post author receives the notification
         actor=request.user,  # The user who liked the post
-        verb="liked your post",  # Description of the action
-        target=post,  # The target object (the post)
+        verb='liked your post',  # Action description
+        target=post  # The object being acted upon (the post)
     )
 
     return JsonResponse({'message': 'Post liked successfully.'}, status=200)
 
+
 @login_required
 def unlike_post(request, post_id):
-    """Handles unliking a post."""
-    post = get_object_or_404(Post, id=post_id)
+    # Get the post object or return 404 if not found
+    post = get_object_or_404(Post, pk=post_id)
 
-    # Check if the user has liked the post
-    like = Like.objects.filter(user=request.user, post=post).first()
-    if not like:
-        return JsonResponse({'message': 'You have not liked this post.'}, status=400)
+    # Try to get the like object if it exists
+    try:
+        like = Like.objects.get(user=request.user, post=post)
+        like.delete()  # Remove the like
+    except Like.DoesNotExist:
+        return JsonResponse({'message': 'You have not liked this post yet.'}, status=400)
 
-    # Delete the Like entry
-    like.delete()
-
-    # Optionally create a notification for the unlike action (if needed)
-    Notification.objects.create(
-        recipient=post.author,  # The post's author gets notified
-        actor=request.user,  # The user who unliked the post
-        verb="unliked your post",  # Description of the action
-        target=post,  # The target object (the post)
+    # Create a notification for the unliked action
+    notification = Notification.objects.create(
+        recipient=post.author,
+        actor=request.user,
+        verb='unliked your post',
+        target=post
     )
 
     return JsonResponse({'message': 'Post unliked successfully.'}, status=200)
+
 
 
 from rest_framework import status
