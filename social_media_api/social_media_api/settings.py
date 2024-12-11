@@ -148,3 +148,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
+
+USERNAME_FIELD = 'email'
+REQUIRED_FIELDS = ['username']

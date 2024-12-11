@@ -5,7 +5,7 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
+        email = models.EmailField(unique=True)
         user = self.model(username=username, email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -25,7 +25,12 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
     bio = models.TextField(blank=True)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture = models.ImageField(
+        upload_to='profile_pictures/', 
+        blank=True, 
+        null=True, 
+        default='profile_pictures/default.jpg'
+    )
     followers = models.ManyToManyField('self', symmetrical=False, related_name='followed_by', blank=True)
     following = models.ManyToManyField('self', symmetrical=False, related_name='following_users', blank=True)
 
