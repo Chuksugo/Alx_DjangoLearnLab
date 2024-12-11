@@ -1,7 +1,17 @@
 from rest_framework import viewsets, permissions, filters
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from .models import Post, Like
+from .serializers import LikeSerializer
+from rest_framework.decorators import api_view
+from notifications.models import Notification
+from django.http import JsonResponse
 
+# Post and Comment ViewSets for CRUD operations via REST framework
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -20,60 +30,38 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-
-# posts/views.py
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from .models import Post
-from .serializers import PostSerializer  # Ensure you import your serializer
-
+# Feed View for getting posts from followed users
 class FeedView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        # Get the list of users the current user is following
         following_users = user.following.all()
-
-        # Fetch the posts by users the current user is following
         posts = Post.objects.filter(author__in=following_users).order_by('-published_date')
-
-        # Serialize the posts
         serialized_posts = PostSerializer(posts, many=True).data
-
-        # Return the serialized data
         return Response(serialized_posts, status=status.HTTP_200_OK)
 
-
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from posts.models import Post, Like
-from notifications.models import Notification
-from django.contrib.auth.decorators import login_required
-
-@login_required
+# Like and Unlike Post functionality
+@api_view(['POST'])
 def like_post(request, post_id):
-    # Get the post object or return 404 if not found
-    post = get_object_or_404(Post, pk=post_id)
+    # Fetch post using get_object_or_404
+    post = get_object_or_404(Post, id=post_id)
 
     # Check if the user has already liked the post
-    like, created = Like.objects.get_or_create(user=request.user, post=post)
+    if Like.objects.filter(user=request.user, post=post).exists():
+        return Response({"error": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not created:
-        return JsonResponse({'message': 'You have already liked this post.'}, status=400)
+    # Create a like instance
+    like = Like.objects.create(user=request.user, post=post)
+    serializer = LikeSerializer(like)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # Create a notification for the post author
-    Notification.objects.create(
-        recipient=post.author,  # Post author receives the notification
-        actor=request.user,  # The user who liked the post
-        verb='liked your post',  # Action description
-        target=post  # The object being acted upon (the post)
-    )
-
-    return JsonResponse({'message': 'Post liked successfully.'}, status=200)
-
+# In posts/views.py
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from .models import Post, Like
+from notifications.models import Notification
+from django.contrib.auth.decorators import login_required
 
 @login_required
 def unlike_post(request, post_id):
@@ -98,27 +86,9 @@ def unlike_post(request, post_id):
     return JsonResponse({'message': 'Post unliked successfully.'}, status=200)
 
 
-
-
-from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from .models import Post, Like
-from .serializers import LikeSerializer
-
-@api_view(['POST'])
-def like_post(request, post_id):
-    # Use get_object_or_404 to fetch the post safely
-    post = get_object_or_404(Post, id=post_id)
-
-    # Check if the user has already liked the post
-    if Like.objects.filter(user=request.user, post=post).exists():
-        return Response({"error": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
-
-    # Create a like instance
-    like = Like.objects.create(user=request.user, post=post)
-
-    # Serialize the like data
-    serializer = LikeSerializer(like)
-    
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+# PostDetailView to get details of a specific post
+class PostDetailView(APIView):
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
