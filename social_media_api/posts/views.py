@@ -52,7 +52,6 @@ from django.http import JsonResponse
 from posts.models import Post, Like
 from notifications.models import Notification
 from django.contrib.auth.decorators import login_required
-from django.contrib.contenttypes.models import ContentType
 
 @login_required
 def like_post(request, post_id):
@@ -66,7 +65,7 @@ def like_post(request, post_id):
         return JsonResponse({'message': 'You have already liked this post.'}, status=400)
 
     # Create a notification for the post author
-    notification = Notification.objects.create(
+    Notification.objects.create(
         recipient=post.author,  # Post author receives the notification
         actor=request.user,  # The user who liked the post
         verb='liked your post',  # Action description
@@ -89,7 +88,7 @@ def unlike_post(request, post_id):
         return JsonResponse({'message': 'You have not liked this post yet.'}, status=400)
 
     # Create a notification for the unliked action
-    notification = Notification.objects.create(
+    Notification.objects.create(
         recipient=post.author,
         actor=request.user,
         verb='unliked your post',
@@ -97,6 +96,7 @@ def unlike_post(request, post_id):
     )
 
     return JsonResponse({'message': 'Post unliked successfully.'}, status=200)
+
 
 
 
