@@ -1,15 +1,12 @@
 from rest_framework import viewsets, permissions, filters
-from .models import Post, Comment
-from .serializers import PostSerializer, CommentSerializer
+from .models import Post, Comment, Like
+from .serializers import PostSerializer, CommentSerializer, LikeSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from .models import Post, Like
-from .serializers import LikeSerializer
 from rest_framework.decorators import api_view
 from notifications.models import Notification
-from django.http import JsonResponse
 
 # Post and Comment ViewSets for CRUD operations via REST framework
 class PostViewSet(viewsets.ModelViewSet):
@@ -41,7 +38,7 @@ class FeedView(APIView):
         serialized_posts = PostSerializer(posts, many=True).data
         return Response(serialized_posts, status=status.HTTP_200_OK)
 
-# Like and Unlike Post functionality
+# Like a post
 @api_view(['POST'])
 def like_post(request, post_id):
     # Fetch post using get_object_or_404
@@ -56,16 +53,10 @@ def like_post(request, post_id):
     serializer = LikeSerializer(like)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-# In posts/views.py
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
-from .models import Post, Like
-from notifications.models import Notification
-from django.contrib.auth.decorators import login_required
-
-@login_required
+# Unlike a post (updated to use api_view for consistency)
+@api_view(['POST'])
 def unlike_post(request, post_id):
-    # Get the post object or return 404 if not found
+    # Fetch post using get_object_or_404
     post = get_object_or_404(Post, pk=post_id)
 
     # Try to get the like object if it exists
@@ -73,7 +64,7 @@ def unlike_post(request, post_id):
         like = Like.objects.get(user=request.user, post=post)
         like.delete()  # Remove the like
     except Like.DoesNotExist:
-        return JsonResponse({'message': 'You have not liked this post yet.'}, status=400)
+        return Response({'message': 'You have not liked this post yet.'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Create a notification for the unliked action
     Notification.objects.create(
@@ -83,8 +74,7 @@ def unlike_post(request, post_id):
         target=post
     )
 
-    return JsonResponse({'message': 'Post unliked successfully.'}, status=200)
-
+    return Response({'message': 'Post unliked successfully.'}, status=status.HTTP_200_OK)
 
 # PostDetailView to get details of a specific post
 class PostDetailView(APIView):
