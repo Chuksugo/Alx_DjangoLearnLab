@@ -65,3 +65,30 @@ Ensure consistency in relationship handling.
 Use descriptive related_name attributes for readability.
 Consider edge case handling, such as preventing self-following or duplicate entries.
 These updates provide the foundation for user interactions related to following, unfollowing, and generating feeds based on users’ follow relationships.
+
+
+### **API Endpoint Documentation Summary**
+
+1. **Like Post Endpoint** (`POST /posts/<int:post_id>/like/`):
+   - Allows users to like a post.
+   - Returns a success message and generates a notification.
+   - Prevents users from liking a post multiple times.
+
+2. **Unlike Post Endpoint** (`POST /posts/<int:post_id>/unlike/`):
+   - Allows users to unlike a post.
+   - Removes the like and generates an unlike notification.
+
+3. **View Notifications Endpoint** (`GET /notifications/`):
+   - Retrieves a list of notifications for the authenticated user.
+   - Displays notifications with details like the actor, recipient, and the post.
+
+---
+
+### **Testing Results Summary**
+
+1. **Like Post**: Verified that a user can like a post and a notification is generated.
+2. **Prevent Multiple Likes**: Ensured a user cannot like the same post multiple times.
+3. **Unlike Post**: Confirmed users can unlike a post, removing the like and generating an unlike notification.
+4. **View Notifications**: Ensured that notifications are displayed correctly for the user.
+
+All tests passed successfully, confirming the like and notification features work as intended.
