@@ -7,6 +7,7 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from notifications.models import Notification
+from rest_framework import generics
 
 # Post and Comment ViewSets for CRUD operations via REST framework
 class PostViewSet(viewsets.ModelViewSet):
@@ -76,9 +77,10 @@ def unlike_post(request, post_id):
     else:
         return Response({'message': 'You have not liked this post yet.'}, status=status.HTTP_400_BAD_REQUEST)
 
-# PostDetailView to get details of a specific post
-class PostDetailView(APIView):
-    def get(self, request, pk):
-        post = get_object_or_404(Post, pk=pk)
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
+class PostDetailView(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+    def get_object(self):
+        # Fetch the Post object or raise a 404 if it doesn't exist
+        return get_object_or_404(Post, pk=self.kwargs['pk'])
