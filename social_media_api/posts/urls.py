@@ -19,12 +19,11 @@ urlpatterns = [
 ]
 
 
-# In posts/urls.py
+# posts/urls.py
 from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('posts/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
-    path('posts/<int:post_id>/like/', views.like_post, name='like_post'),
-    path('posts/<int:post_id>/unlike/', views.unlike_post, name='unlike_post'),  # Ensure this line is correct
+    path('posts/<int:pk>/like/', views.LikePostView.as_view(), name='like_post'),
+    path('posts/<int:pk>/unlike/', views.UnLikePostView.as_view(), name='unlike_post'),
 ]
